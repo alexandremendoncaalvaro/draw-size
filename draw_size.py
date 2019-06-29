@@ -105,7 +105,7 @@ class Box(object):
 
 
 class ResultFrame(object):
-    def paint_box(self, frame, box_points, reference_width):
+    def paint(self, frame, box_points, reference_width):
         cv2.drawContours(
             frame, [box_points.astype("int")], -1, Color.GREEN, 2)
 
@@ -167,7 +167,7 @@ def main():
                 if cv2.contourArea(shape_contour) <= app_control.minimun_size_tolerance:
                     continue
                 box = Box(shape_contour)
-                painted_frame = result_frame.paint_box(
+                painted_frame = result_frame.paint(
                     painted_frame, box.points, reference_width)
         video.update_window(painted_frame)
         app_control.stop_video = video.stop_when_key_press('q')
