@@ -1,7 +1,11 @@
 # Draw Size
 
 Basic example of real time size estimation from camera with with OpenCV
+
+The first-left object width is the reference for measurement
+
   * MIT License
+  * Required Python 3.6+
 
 ![](draw-paper-example.gif)
 
@@ -11,14 +15,13 @@ after install...
 
 ## Example
 ```bash
-python3 webcam.py --webcam 0 --cm 2.0
+python3 draw_size.py --camera 0 --width 2.0
 ```
 arguments:
-* webcam: source id (default webcam is 0) - optional
-* cm: width in centimeters of the first-left object (for reference) - required
+* camera: source id (default webcam is 0) - optional
+* width: width in centimeters of the first-left object (for reference) - required
 
 press **q** to exit
-
 
 # References
 
