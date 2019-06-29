@@ -7,8 +7,14 @@ The first-left object width is the reference for measurement
   * MIT License
   * Required Python 3.6+
 
-![](draw-paper-example.gif)
+![](draw_paper_example.gif)
 
+# References
+
+Base examples from pyimagesearch:
+
+* https://www.pyimagesearch.com/2016/03/28/measuring-size-of-objects-in-an-image-with-opencv/
+* https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/
 
 # How to use
 after install...
@@ -24,10 +30,16 @@ arguments:
 
 press **q** to exit
 
-# References
+## For study and sharing purposes I added a basic shape detection algorithm
 
-Base example with static images:
-https://www.pyimagesearch.com/2016/03/28/measuring-size-of-objects-in-an-image-with-opencv/
+![](shape_detector_example.png)
+
+## Example
+```bash
+python3 shape_detector.py --images images\example_01.png
+```
+arguments:
+* image: the image path
 
 # Install
 
