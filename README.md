@@ -15,11 +15,12 @@ after install...
 
 ## Example
 ```bash
-python3 draw_size.py --camera 0 --width 2.0
+python3 draw_size.py --camera 0 --width 2.0 --float 2
 ```
 arguments:
 * camera: source id (default webcam is 0) - optional
 * width: width in centimeters of the first-left object (for reference) - required
+* float: floating point precision
 
 press **q** to exit
 

@@ -18,6 +18,8 @@ class AppControl():
                                           help='webcam source id')
         self.argument_parser.add_argument('-w', '--width', type=float, required=True,
                                           help='width of the left-most object in the image (in cm)')
+        self.argument_parser.add_argument('-f', '--float', type=int, default=1,
+                                          help='floating point precision')
         arguments = vars(self.argument_parser.parse_args())
         return arguments
 
@@ -105,7 +107,7 @@ class Box(object):
 
 
 class ResultFrame(object):
-    def paint(self, frame, box_points, reference_width):
+    def paint(self, frame, box_points, reference_width, float_precision):
         cv2.drawContours(
             frame, [box_points.astype("int")], -1, Color.GREEN, 2)
 
@@ -137,14 +139,27 @@ class ResultFrame(object):
         pixelsPerMetric = dB / reference_width
 
         # compute the size of the object
-        dimA = int(dA / pixelsPerMetric)
-        dimB = int(dB / pixelsPerMetric)
+        dimA = dA / pixelsPerMetric
+        dimB = dB / pixelsPerMetric
 
         # draw the object sizes on the image
-        cv2.putText(frame, f'{dimA}cm',
+        if float_precision <= 0:
+            text_dimA = f'{dimA:.0f}cm'
+            text_dimB = f'{dimB:.0f}cm'
+        elif float_precision == 1:
+            text_dimB = f'{dimB:.1f}cm'
+            text_dimA = f'{dimA:.1f}cm'
+        elif float_precision == 2:
+            text_dimA = f'{dimA:.2f}cm'
+            text_dimB = f'{dimB:.2f}cm'
+        else:
+            text_dimA = f'{dimA:.3f}cm'
+            text_dimB = f'{dimB:.3f}cm'
+
+        cv2.putText(frame, text_dimA,
                     (int(tltrX - 15), int(tltrY - 10)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.65, Color.WHITE, 2)
-        cv2.putText(frame, f'{dimB}cm',
+        cv2.putText(frame, text_dimB,
                     (int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.65, Color.WHITE, 2)
         return frame
@@ -155,6 +170,7 @@ def main():
     arguments = app_control.get_arguments()
     camera_id = arguments['camera']
     reference_width = arguments['width']
+    float_precision = arguments['float']
     video = Video(camera_id)
     object_detector = ObjectDetector()
     result_frame = ResultFrame()
@@ -168,7 +184,7 @@ def main():
                     continue
                 box = Box(shape_contour)
                 painted_frame = result_frame.paint(
-                    painted_frame, box.points, reference_width)
+                    painted_frame, box.points, reference_width, float_precision)
         video.update_window(painted_frame)
         app_control.stop_video = video.stop_when_key_press('q')
 
