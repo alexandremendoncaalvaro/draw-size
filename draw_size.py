@@ -9,14 +9,15 @@ import cv2
 
 class AppControl():
     def __init__(self):
+        self.MINIMUN_SIZE_TOLERANCE = 100.0
         self.argument_parser = argparse.ArgumentParser()
         self.stop_video = False
-        self.minimun_size_tolerance = 100
+        
 
     def get_arguments(self):
-        self.argument_parser.add_argument('-c', '--camera', type=int, default=0,
+        self.argument_parser.add_argument('-c', '--camera', type=int, default=1,
                                           help='webcam source id')
-        self.argument_parser.add_argument('-w', '--width', type=float, required=True,
+        self.argument_parser.add_argument('-w', '--width', type=float, default=2.0,
                                           help='width of the left-most object in the image (in cm)')
         self.argument_parser.add_argument('-f', '--float', type=int, default=1,
                                           help='floating point precision')
@@ -86,7 +87,7 @@ class ObjectDetector(object):
             edged_frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if len(all_contours) == 2:
             grabed_contours = imutils.grab_contours(all_contours)
-            if len(grabed_contours) == 2:
+            if len(grabed_contours) > 0:
                 (sorted_contours, _) = contours.sort_contours(grabed_contours)
                 shapes_contours = sorted_contours
         return shapes_contours
@@ -180,7 +181,7 @@ def main():
         painted_frame = frame.copy()
         if shapes_contours != None:
             for shape_contour in shapes_contours:
-                if cv2.contourArea(shape_contour) <= app_control.minimun_size_tolerance:
+                if cv2.contourArea(shape_contour) <= app_control.MINIMUN_SIZE_TOLERANCE:
                     continue
                 box = Box(shape_contour)
                 painted_frame = result_frame.paint(
