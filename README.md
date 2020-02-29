@@ -36,7 +36,7 @@ press **q** to exit
 
 ## Example
 ```bash
-python3 shape_detector.py --images images\example_01.png
+python3 shape_detector.py --image images\example_01.png
 ```
 arguments:
 * image: the image path
