@@ -97,6 +97,30 @@ class ObjectDetector(object):
         shapes_contours = self.get_contours(edged_frame)
         return shapes_contours
 
+    def detect(self, c):
+        shape = "desconhecido"
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.04 * peri, True)
+
+        if len(approx) <= 2:
+            shape = "linha"
+
+        elif len(approx) == 3:
+            shape = "triangulo"
+
+        elif len(approx) == 4:
+            (x, y, w, h) = cv2.boundingRect(approx)
+            ar = w / float(h)
+            shape = "quadrado" if ar >= 0.95 and ar <= 1.05 else "retangulo"
+
+        elif len(approx) == 5:
+            shape = "pentagono"
+
+        else:
+            shape = "circulo"
+
+        return shape
+
 
 class Box(object):
     def __init__(self, shape_contour):
@@ -108,7 +132,7 @@ class Box(object):
 
 
 class ResultFrame(object):
-    def paint(self, frame, box_points, reference_width, float_precision):
+    def paint(self, frame, box_points, reference_width, float_precision, shape_name):
         cv2.drawContours(
             frame, [box_points.astype("int")], -1, Color.GREEN, 2)
 
@@ -163,6 +187,10 @@ class ResultFrame(object):
         cv2.putText(frame, text_dimB,
                     (int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.65, Color.WHITE, 2)
+
+        cv2.putText(frame, shape_name,
+                    (int(tr[0] + 10), int(tr[1]) - 20), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.65, Color.RED, 2)
         return frame
 
 
@@ -183,9 +211,10 @@ def main():
             for shape_contour in shapes_contours:
                 if cv2.contourArea(shape_contour) <= app_control.MINIMUN_SIZE_TOLERANCE:
                     continue
+                shape_name = object_detector.detect(shape_contour)
                 box = Box(shape_contour)
                 painted_frame = result_frame.paint(
-                    painted_frame, box.points, reference_width, float_precision)
+                    painted_frame, box.points, reference_width, float_precision, shape_name)
         video.update_window(painted_frame)
         app_control.stop_video = video.stop_when_key_press('q')
 
