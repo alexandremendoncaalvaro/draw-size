@@ -43,7 +43,7 @@ arguments:
 
 # Install
 
-*if **pip3** command not working use **pip** instead
+*if **pip3** command not working use [**pip**](https://www.scaler.com/topics/what-is-pip-in-python/) instead
 
 **if something not work, try to reboot the terminal. :)
 
